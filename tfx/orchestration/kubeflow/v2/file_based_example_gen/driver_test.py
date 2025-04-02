@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+
 import json
 import os
 
 from absl.testing import parameterized
 from kfp.pipeline_spec import pipeline_spec_pb2 as pipeline_pb2
-import tensorflow as tf
 from tfx.dsl.io import fileio
 from tfx.orchestration.kubeflow.v2 import compiler_utils
 from tfx.orchestration.kubeflow.v2.file_based_example_gen import driver
@@ -267,7 +268,3 @@ class RunDriverTest(test_case_utils.TfxTest, parameterized.TestCase):
               json.loads(expected_result_from_file), indent=2, sort_keys=True
           ),
       )
-
-
-if __name__ == '__main__':
-  tf.test.main()

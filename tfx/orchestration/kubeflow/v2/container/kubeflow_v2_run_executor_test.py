@@ -13,6 +13,7 @@
 # limitations under the License.
 """Tests for kubeflow_v2_run_executor.py."""
 
+
 import json
 import os
 from typing import Any, Mapping, Sequence
@@ -20,7 +21,6 @@ from unittest import mock
 
 from absl.testing import parameterized
 from kfp.pipeline_spec import pipeline_spec_pb2
-import tensorflow as tf
 from tfx import version
 from tfx.components.evaluator import constants
 from tfx.components.evaluator import executor as evaluator_executor
@@ -313,7 +313,3 @@ class KubeflowV2RunExecutorTest(
 
     self.assertEqual(actual_output, self._expected_output)
     os.remove(_TEST_OUTPUT_METADATA_JSON)
-
-
-if __name__ == "__main__":
-  tf.test.main()

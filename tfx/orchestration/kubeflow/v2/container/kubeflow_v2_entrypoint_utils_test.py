@@ -13,6 +13,8 @@
 # limitations under the License.
 """Tests for kubeflow_v2_entrypoint_utils.py."""
 
+
+
 import os
 from kfp.pipeline_spec import pipeline_spec_pb2 as pipeline_pb2
 import tensorflow as tf
@@ -209,7 +211,3 @@ class KubeflowV2EntrypointUtilsTest(tf.test.TestCase):
 
     self.assertDictEqual(expected_model_blessing.to_json_dict(),
                          model_blessing.to_json_dict())
-
-
-if __name__ == '__main__':
-  tf.test.main()

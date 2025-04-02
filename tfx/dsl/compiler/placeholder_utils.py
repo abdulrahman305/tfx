@@ -733,6 +733,16 @@ class _ExpressionResolver:
 
     raise ValueError(f"Unrecognized binary logical operation {op.op}.")
 
+  @_register(placeholder_pb2.DirNameOperator)
+  def _resolve_dir_name_operator(
+      self,
+      op: placeholder_pb2.DirNameOperator,
+      pool: Optional[descriptor_pool.DescriptorPool] = None,
+  ) -> str:
+    """Returns the directory name of the file."""
+    path = self.resolve(op.expression, pool)
+    return os.path.dirname(path)
+
 
 def debug_str(expression: placeholder_pb2.PlaceholderExpression) -> str:
   """Gets the debug string of a placeholder expression proto.
@@ -876,6 +886,10 @@ def debug_str(expression: placeholder_pb2.PlaceholderExpression) -> str:
       )
       return f"MakeProto({str(operator_pb.base).strip()}, {expression_str})"
 
+    if operator_name == "dir_name_op":
+      expression_str = debug_str(operator_pb.expression)
+      return f"dirname({expression_str})"
+
     return "Unknown placeholder operator"
 
   return "Unknown placeholder expression"
@@ -938,6 +952,9 @@ def get_all_types_in_placeholder_expression(
       expressions = operator_pb.expressions
     elif operator_name == "make_proto_op":
       expressions = operator_pb.fields.values()
+    elif operator_name == "make_dict_op":
+      expressions = [entry.key for entry in operator_pb.entries]
+      expressions += [entry.value for entry in operator_pb.entries]
     else:
       raise ValueError(
           f"Unrecognized placeholder operator {operator_name} in expression: "

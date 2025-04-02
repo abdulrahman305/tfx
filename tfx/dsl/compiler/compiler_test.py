@@ -16,6 +16,7 @@ r"""Tests for tfx.dsl.compiler.compiler.
 To update the golden IR proto, use --persist_test_protos flag.
 """
 
+
 import os
 import threading
 import types
@@ -286,7 +287,3 @@ class CompilerTest(tf.test.TestCase, parameterized.TestCase):
         ValueError, "Resolver nodes can not be used in ASYNC mode."
     ):
       dsl_compiler.compile(test_pipeline)
-
-
-if __name__ == "__main__":
-  tf.test.main()

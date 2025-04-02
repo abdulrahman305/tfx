@@ -13,6 +13,7 @@
 # limitations under the License.
 """Tests for tfx.utils.channel."""
 
+
 from unittest import mock
 
 import tensorflow as tf
@@ -229,7 +230,3 @@ class ChannelTest(tf.test.TestCase):
     optional_output_channel.set_as_async_channel()
     self.assertTrue(optional_output_channel.is_async)
     self.assertFalse(required_output_channel.is_async)
-
-
-if __name__ == '__main__':
-  tf.test.main()

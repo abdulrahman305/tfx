@@ -25,6 +25,7 @@ from tfx.dsl.components.base import executor_spec
 from tfx.types import artifact
 from tfx.types import component_spec
 from tfx.types import system_executions
+from google.protobuf import message
 
 
 class ArgFormats(enum.Enum):
@@ -151,6 +152,24 @@ def assert_is_top_level_func(func: types.FunctionType) -> None:
     )
 
 
+def assert_no_private_func_in_main(func: types.FunctionType) -> None:
+  """Asserts the func is not a private function in the main file.
+
+
+  Args:
+    func: The function to be checked.
+
+  Raises:
+    ValueError if the func was defined in main and whose name starts with '_'.
+  """
+  if func.__module__ == '__main__' and func.__name__.startswith('_'):
+    raise ValueError(
+        'Custom Python functions (both @component and pre/post hooks) declared'
+        ' in the main file must be public. Please remove the leading'
+        f' underscore from {func.__name__}.'
+    )
+
+
 def _create_component_spec_class(
     func: types.FunctionType,
     arg_defaults: Dict[str, Any],
@@ -206,10 +225,17 @@ def _create_component_spec_class(
             json_compatible_outputs[key],
         )
   if parameters:
-    for key, primitive_type in parameters.items():
-      spec_parameters[key] = component_spec.ExecutionParameter(
-          type=primitive_type, optional=(key in arg_defaults)
-      )
+    for key, param_type in parameters.items():
+      if inspect.isclass(param_type) and issubclass(
+          param_type, message.Message
+      ):
+        spec_parameters[key] = component_spec.ExecutionParameter(
+            type=param_type, optional=(key in arg_defaults), use_proto=True
+        )
+      else:
+        spec_parameters[key] = component_spec.ExecutionParameter(
+            type=param_type, optional=(key in arg_defaults)
+        )
   component_spec_class = type(
       '%s_Spec' % func.__name__,
       (tfx_types.ComponentSpec,),
@@ -253,12 +279,7 @@ def _create_executor_spec_instance(
     an instance of `executor_spec_class` whose executor_class is a subclass of
     `base_executor_class`.
   """
-  if func.__module__ == '__main__' and func.__name__.startswith('_'):
-    raise ValueError(
-        'Custom Python @components declared in the main file must be public. '
-        f'Please remove the leading underscore from {func.__name__}.'
-    )
-
+  assert_no_private_func_in_main(func)
   executor_class_name = f'{func.__name__}_Executor'
   executor_class = type(
       executor_class_name,

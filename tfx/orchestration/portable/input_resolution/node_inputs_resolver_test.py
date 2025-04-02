@@ -13,6 +13,7 @@
 # limitations under the License.
 """Tests for tfx.orchestration.portable.input_resolution.node_inputs_resolver."""
 
+
 from typing import Set
 from unittest import mock
 
@@ -855,7 +856,7 @@ class LiveTest(test_case_utils.TfxTest, test_case_utils.MlmdMixins):
   def testStaticInputs(self):
     e1 = self.put_artifact('Examples')
     e2 = self.put_artifact('Examples')
-    e3 = self.put_artifact('Examples')  # pylint: disable=unused-variable
+    e3 = self.put_artifact('Examples')  # noqa: F841
     e4 = self.put_artifact('Examples')
 
     node_inputs = NodeInputs(
@@ -911,7 +912,3 @@ class LiveTest(test_case_utils.TfxTest, test_case_utils.MlmdMixins):
     )
     with self.assertRaises(exceptions.FailedPreconditionError):
       node_inputs_resolver.resolve(self.mlmd_cm, node_inputs)
-
-
-if __name__ == '__main__':
-  tf.test.main()
