@@ -1,4 +1,4 @@
-FROM ubuntu:xenial-20201014
+FROM ubuntu:xenial-20210114
 LABEL maintainer="tensorflow-extended-dev@googlegroups.com"
 
 COPY init.sh /
